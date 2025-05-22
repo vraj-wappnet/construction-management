@@ -16,8 +16,10 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../users/user.entity';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('projects/:projectId/materials')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MaterialsController {
   constructor(private readonly materialsService: MaterialsService) {}

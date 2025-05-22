@@ -20,10 +20,28 @@ import { Otp } from './auth/otp.entity';
 import { Vendor } from './vendors/vendor.entity';
 import { VendorsModule } from './vendors/vendors.module';
 import { DocumentVersion } from './documents/document-version.entity';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true, // Make ConfigService available application-wide
+      envFilePath: '.env', // Explicitly specify the .env file path
+      validationSchema: Joi.object({
+        // Optional: validate your env variables
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test')
+          .default('development'),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.number().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_DATABASE: Joi.string().required(),
+        JWT_SECRET: Joi.string().required(),
+        OTP_SECRET: Joi.string().required(),
+        // Add other required environment variables here
+      }),
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
