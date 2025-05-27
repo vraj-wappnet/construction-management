@@ -14,8 +14,10 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserRole } from './user.entity';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -37,6 +39,20 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   getProfile(@Req() req) {
     return this.usersService.findOne(req.user.id);
+  }
+
+  @ApiBearerAuth()
+  @Get('site-engineers')
+  @UseGuards(JwtAuthGuard)
+  getSiteEngineers() {
+    return this.usersService.getSiteEngineers();
+  }
+
+  @ApiBearerAuth()
+  @Get('contractors')
+  @UseGuards(JwtAuthGuard)
+  getContractors() {
+    return this.usersService.getContractors();
   }
 
   @ApiBearerAuth()
