@@ -1,13 +1,5 @@
-// src/documents/document.entity.ts
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Project } from '../projects/project.entity';
-import { DocumentVersion } from './document-version.entity';
 
 @Entity()
 export class Document {
@@ -20,9 +12,9 @@ export class Document {
   @Column()
   type: string; // blueprint, contract, approval, etc.
 
+  @Column()
+  filePath: string; // Store the Firebase Storage URL
+
   @ManyToOne(() => Project, (project) => project.documents)
   project: Project;
-
-  @OneToMany(() => DocumentVersion, (version) => version.document)
-  versions: DocumentVersion[];
 }

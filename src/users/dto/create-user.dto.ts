@@ -1,4 +1,3 @@
-// src/users/dto/create-user.dto.ts
 import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../user.entity';
@@ -35,7 +34,7 @@ export class CreateUserDto {
   @ApiProperty({
     description: 'The role of the user',
     enum: UserRole,
-    example: 'user', // Use a valid value from your UserRole enum, e.g., 'user' or 'admin'
+    example: 'client',
   })
   @IsEnum(UserRole)
   role: UserRole;

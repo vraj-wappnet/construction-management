@@ -68,7 +68,7 @@ export class MaterialsController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.CONTRACTOR)
   remove(@Param('id') id: string) {
     return this.materialsService.remove(+id);
   }

@@ -1,5 +1,11 @@
-// src/users/user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, OneToMany, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
+  OneToMany,
+  ManyToMany,
+} from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { Project } from '../projects/project.entity';
 import { Task } from '../tasks/task.entity';
@@ -41,22 +47,21 @@ export class User {
   @Column({ nullable: true })
   company: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  profilePicture: string | null;
+
   @Column({ default: true })
   isActive: boolean;
 
-  // Projects where this user is the client
   @OneToMany(() => Project, (project) => project.client)
   projects: Project[];
 
-  // Projects where this user is a contractor
   @ManyToMany(() => Project, (project) => project.contractors)
   contractorProjects: Project[];
 
-  // Projects where this user is a site engineer
   @ManyToMany(() => Project, (project) => project.siteEngineers)
   siteEngineerProjects: Project[];
 
-  // Tasks assigned to this user
   @ManyToMany(() => Task, (task) => task.assignedTo)
   tasks: Task[];
 

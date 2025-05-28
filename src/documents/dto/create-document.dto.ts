@@ -1,5 +1,4 @@
-// src/documents/dto/create-document.dto.ts
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateDocumentDto {
@@ -11,25 +10,18 @@ export class CreateDocumentDto {
   name: string;
 
   @ApiProperty({
-    description: 'The type of the document (e.g., blueprint, contract, approval)',
+    description: 'The type of the document',
     example: 'blueprint',
   })
   @IsString()
   type: string;
 
   @ApiProperty({
-    description: 'A brief description of the document (optional)',
-    example: 'Blueprint for the new office layout',
+    description: 'Notes about this document (optional)',
+    example: 'Initial draft of the blueprint',
     required: false,
   })
   @IsOptional()
   @IsString()
-  description?: string;
-
-  @ApiProperty({
-    description: 'The ID of the project associated with the document',
-    example: 1,
-  })
-  @IsNumber()
-  projectId: number;
+  notes?: string;
 }

@@ -1,14 +1,3 @@
-// // src/users/dto/update-user.dto.ts
-// import { PartialType } from '@nestjs/mapped-types';
-// import { CreateUserDto } from './create-user.dto';
-// import { IsString, IsOptional } from 'class-validator';
-
-// export class UpdateUserDto extends PartialType(CreateUserDto) {
-//   @IsOptional()
-//   @IsString()
-//   currentPassword?: string;
-// }
-// src/users/dto/update-user.dto.ts
 import { IsString, IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../user.entity';
@@ -53,7 +42,7 @@ export class UpdateUserDto {
   @ApiProperty({
     description: 'The role of the user (optional)',
     enum: UserRole,
-    example: 'user',
+    example: 'client',
     required: false,
   })
   @IsOptional()
@@ -77,4 +66,18 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   company?: string;
+
+  @ApiProperty({
+    description:
+      'The current password for verification (optional, required if updating password)',
+    example: 'OldPassword123!',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  currentPassword?: string;
+
+  @IsString()
+  @IsOptional()
+  profilePicture?: string;
 }
