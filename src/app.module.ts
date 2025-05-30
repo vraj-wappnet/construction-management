@@ -144,7 +144,8 @@ import * as Joi from 'joi';
           Otp,
           Vendor,
         ],
-        synchronize: configService.get('NODE_ENV') === 'development',
+        // synchronize: configService.get('NODE_ENV') === 'development',
+        synchronize: true, // Set to false in production; use migrations instead
       }),
       inject: [ConfigService],
     }),

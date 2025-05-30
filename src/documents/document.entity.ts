@@ -13,8 +13,9 @@ export class Document {
   type: string; // blueprint, contract, approval, etc.
 
   @Column()
-  filePath: string; // Store the Firebase Storage URL
+  filePath: string; 
 
   @ManyToOne(() => Project, (project) => project.documents)
   project: Project;
+
 }

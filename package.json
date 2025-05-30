@@ -19,9 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm-ts-node-commonjs",
-    "typeorm:migration:generate": "typeorm-ts-node-commonjs migration:generate -- -n",
-    "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
-    "typeorm:migration:revert": "typeorm-ts-node-commonjs migration:revert"
+    "migration:generate": "typeorm migration:generate -d src/data-source.ts",
+    "migration:run": "typeorm migration:run -d src/data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.1",
@@ -48,7 +47,8 @@
     "passport-jwt": "^4.0.1",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "stripe": "^18.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
