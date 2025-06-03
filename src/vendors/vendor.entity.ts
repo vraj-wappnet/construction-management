@@ -3,7 +3,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   ManyToMany,
 } from 'typeorm';
 import { Material } from '../materials/material.entity';
