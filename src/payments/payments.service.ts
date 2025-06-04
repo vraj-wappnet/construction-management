@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Stripe from 'stripe';
@@ -23,7 +28,9 @@ export class PaymentsService {
   ) {
     // Validate STRIPE_SECRET_KEY
     if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error('STRIPE_SECRET_KEY is not defined in environment variables');
+      throw new Error(
+        'STRIPE_SECRET_KEY is not defined in environment variables',
+      );
     }
 
     // Initialize Stripe with the secret key
@@ -36,7 +43,8 @@ export class PaymentsService {
     createPaymentDto: CreatePaymentDto,
     payer: User,
   ): Promise<{ clientSecret: string; paymentId: number }> {
-    const { amount, currency, payeeId, projectId, description } = createPaymentDto;
+    const { amount, currency, payeeId, projectId, description } =
+      createPaymentDto;
 
     const project = await this.projectsRepository.findOne({
       where: { id: projectId },
@@ -67,10 +75,14 @@ export class PaymentsService {
         !project.siteEngineers.some((e) => e.id === payeeId) ||
         !project.contractors.some((c) => c.id === payer.id)
       ) {
-        throw new ForbiddenException('Invalid payee or you are not assigned to this project');
+        throw new ForbiddenException(
+          'Invalid payee or you are not assigned to this project',
+        );
       }
     } else {
-      throw new ForbiddenException('Only clients and contractors can initiate payments');
+      throw new ForbiddenException(
+        'Only clients and contractors can initiate payments',
+      );
     }
 
     // Create Stripe payment intent
@@ -83,7 +95,9 @@ export class PaymentsService {
 
     // Ensure client_secret is present
     if (!paymentIntent.client_secret) {
-      throw new BadRequestException('Failed to create payment intent: client_secret is missing');
+      throw new BadRequestException(
+        'Failed to create payment intent: client_secret is missing',
+      );
     }
 
     // Save payment record
@@ -103,34 +117,52 @@ export class PaymentsService {
     return { clientSecret: paymentIntent.client_secret, paymentId: payment.id };
   }
 
+  // async confirmPayment(
+  //   confirmPaymentDto: ConfirmPaymentDto,
+  //   user: User,
+  // ): Promise<Payment> {
+  //   const { paymentIntentId } = confirmPaymentDto;
+
+  //   const payment = await this.paymentsRepository.findOne({
+  //     where: { stripePaymentIntentId: paymentIntentId },
+  //     relations: ['payer', 'payee', 'project'],
+  //   });
+  //   if (!payment) {
+  //     throw new NotFoundException('Payment not found');
+  //   }
+
+  //   // Verify user is the payer
+  //   if (payment.payer.id !== user.id) {
+  //     throw new ForbiddenException('You are not authorized to confirm this payment');
+  //   }
+
+  //   // Retrieve payment intent from Stripe
+  //   const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+  //   payment.status = paymentIntent.status;
+
+  //   await this.paymentsRepository.save(payment);
+
+  //   return payment;
+  // }
   async confirmPayment(
     confirmPaymentDto: ConfirmPaymentDto,
     user: User,
   ): Promise<Payment> {
     const { paymentIntentId } = confirmPaymentDto;
-
     const payment = await this.paymentsRepository.findOne({
       where: { stripePaymentIntentId: paymentIntentId },
       relations: ['payer', 'payee', 'project'],
     });
-    if (!payment) {
-      throw new NotFoundException('Payment not found');
-    }
 
-    // Verify user is the payer
-    if (payment.payer.id !== user.id) {
-      throw new ForbiddenException('You are not authorized to confirm this payment');
-    }
+    if (!payment) throw new NotFoundException('Payment not found');
+    if (payment.payer.id !== user.id)
+      throw new ForbiddenException('Unauthorized');
 
-    // Retrieve payment intent from Stripe
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
-    payment.status = paymentIntent.status;
-
-    await this.paymentsRepository.save(payment);
-
-    return payment;
+    const paymentIntent =
+      await this.stripe.paymentIntents.retrieve(paymentIntentId);
+    payment.status = paymentIntent.status; // Ensure this is "succeeded" for successful payments
+    return this.paymentsRepository.save(payment);
   }
-
   async getPaymentHistory(user: User): Promise<Payment[]> {
     const query = this.paymentsRepository
       .createQueryBuilder('payment')

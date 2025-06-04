@@ -36,7 +36,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN, UserRole.CLIENT)
+  @Roles(UserRole.ADMIN, UserRole.CLIENT, UserRole.CONTRACTOR)
   async update(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,

@@ -37,6 +37,30 @@ export class ProjectsService {
     return this.projectsRepository.save(project);
   }
 
+  // async update(
+  //   id: number,
+  //   updateProjectDto: UpdateProjectDto,
+  //   user: User,
+  // ): Promise<Project> {
+  //   const project = await this.projectsRepository.findOne({
+  //     where: { id },
+  //     relations: ['client'],
+  //   });
+
+  //   if (!project) {
+  //     throw new NotFoundException('Project not found');
+  //   }
+
+  //   if (user.role !== 'admin' && project.client.id !== user.id) {
+  //     throw new ForbiddenException(
+  //       'You are not authorized to update this project',
+  //     );
+  //   }
+
+  //   Object.assign(project, updateProjectDto);
+  //   return this.projectsRepository.save(project);
+  // }
+
   async update(
     id: number,
     updateProjectDto: UpdateProjectDto,
@@ -44,14 +68,21 @@ export class ProjectsService {
   ): Promise<Project> {
     const project = await this.projectsRepository.findOne({
       where: { id },
-      relations: ['client'],
+      relations: ['client', 'contractors'],
     });
 
     if (!project) {
       throw new NotFoundException('Project not found');
     }
 
-    if (user.role !== 'admin' && project.client.id !== user.id) {
+    const isAdmin = user.role === 'admin';
+    const isClientOwner =
+      user.role === 'client' && project.client.id === user.id;
+    const isAssignedContractor =
+      user.role === 'contractor' &&
+      project.contractors.some((c) => c.id === user.id);
+
+    if (!isAdmin && !isClientOwner && !isAssignedContractor) {
       throw new ForbiddenException(
         'You are not authorized to update this project',
       );
